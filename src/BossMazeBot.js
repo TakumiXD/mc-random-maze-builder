@@ -13,17 +13,18 @@ class BossMazeBot extends MazeBot {
     constructor(username) {
         super(username);
         this.builders = [];
-        this.mazeHeight = -1;
-        this.mazeWidth = -1;
-        this.buildBlockName = "oak_leaves";
-        this.buildItem = null;
-        this.buildBlock = null;
+        this.blueprint = {
+            mazeHeight: -1,
+            mazeWidth: -1,
+            buildBlockName: "oak_leaves",
+            buildItem: null,
+            buildBlock: null
+        };
         this.initEventListeners();
     }
 
     initEventListeners() {
         this.bot.once("spawn", () => {
-            this.bot.chat("Hey, I'm here");
             console.log(`${this.username} spawned`);
             mcData = require('minecraft-data')(this.bot.version);
             Item = require('prismarine-item')(this.bot.version);
@@ -37,11 +38,11 @@ class BossMazeBot extends MazeBot {
             let tokens = message.split(' ');
 
             if (tokens[0] == "buildMaze") {
-                if (!this.validateAndSetTokens(tokens.slice(1))) {
-                    console.log("failed");
+                if (!this.setBlueprint(tokens.slice(1))) {
+                    this.bot.chat("buildMaze failed, invalid arguments");
+                    console.log("buildMaze failed, invalid arguments");
                     return;
                 };
-                console.log("passed")
                 await this.initFly();
                 let currPos = this.bot.entity.position;
                 let offset = [4, 0, 0];
@@ -49,7 +50,7 @@ class BossMazeBot extends MazeBot {
                     let builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
                     this.builders.push(builder);
                     await this.bot.waitForTicks(60);
-                    await builder.initBuildingBlock(this.buildItem, this.buildBlock);
+                    await builder.initBuildingBlock(this.blueprint.buildItem, this.blueprint.buildBlock);
                     await builder.initFly();
                     await builder.flyToPosition(currPos);
                     currPos = currPos.offset(...offset);
@@ -59,58 +60,46 @@ class BossMazeBot extends MazeBot {
         });
     }
 
-    setMazeHeight(height) {
-        this.mazeHeight = height
-    }
-
-    setMazeWidth(width) {
-        this.mazeWidth = width;
-    }
-
-    setBuildBlockName(blockName) {
-        this.buildBlockName = blockName;
-    }
-
-    setBuildItem(block) {
+    getBuildItem(block) {
         try {
-            this.buildItem = new Item(block, 1);
-            return true;
+            return new Item(block, 1);
         } catch(e) {
             console.log(e);
-            return false;
+            return null;
         }
     }
 
     // --- Give name of a block as a string returns the mcData blocks id
-    setBuildBlock(blockName) {
+    getBuildBlock(blockName) {
         try {
-            this.buildBlock = mcData.itemsByName[blockName].id;
-            return true;
+            return mcData.itemsByName[blockName].id;
         } catch(e) {
             this.bot.chat(`Failed, specified block does not exist: ${blockName}`);
             console.log(`getBlock() failed, specified block does not exist: ${blockName}`);
-            return false;
+            return null;
         }
     }
 
-    validateAndSetTokens(tokens) {
+    setBlueprint(tokens) {
         // validate command length
         if (tokens.length > MAX_LENGTH_COMMAND - 1) return false;
         // validate and set maze height and width arguments
         if (isNaN(tokens[0]) || isNaN(tokens[1])) return false;
         if (Maze.areValidArguments(parseInt(tokens[0]), parseInt(tokens[1]))) {
-            this.setMazeHeight = parseInt(tokens[0]);
-            this.setMazeWidth = parseInt(tokens[1]);
+            this.blueprint.mazeHeight = parseInt(tokens[0]);
+            this.blueprint.mazeWidth = parseInt(tokens[1]);
         }
         else return false;
         // set buildBlockName to block argument if it exists
         if (tokens.length == MAX_LENGTH_COMMAND - 1) {
-            this.setBuildBlockName(tokens[2]);
+            this.blueprint.buildBlockName = tokens[2];
         }
         // validate and set buildBlock
-        if (!this.setBuildBlock(this.buildBlockName)) return false;
+        this.blueprint.buildBlock = this.getBuildBlock(this.blueprint.buildBlockName);
+        if (!this.blueprint.buildBlock) return false;
         // validate and set buildItem
-        if (!this.setBuildItem(this.buildBlock)) return false;
+        this.blueprint.buildItem = this.getBuildItem(this.blueprint.buildBlock);
+        if (!this.blueprint.buildItem) return false;
         return true;
     }
 }
