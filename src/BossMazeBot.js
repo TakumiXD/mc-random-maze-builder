@@ -1,6 +1,6 @@
 const MazeBot = require("./MazeBot");
 const BuilderMazeBot = require("./BuilderMazeBot");
-const config = require("./config.json");
+const config = require("../config.json");
 var Item;  // loaded after bot spawns in minecraft server
 var mcData; // loaded after bot spawns in minecraft server
 const vec3 = require('vec3');

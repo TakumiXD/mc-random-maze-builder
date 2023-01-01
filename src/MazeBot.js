@@ -1,5 +1,5 @@
 const mineflayer = require("mineflayer");
-const config = require("./config.json");
+const config = require("../config.json");
 
 const settings = {
     host: "localhost",
