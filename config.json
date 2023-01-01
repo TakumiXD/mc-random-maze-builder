@@ -1,7 +1,8 @@
 {
     "settings": {
-        "portNumber": 63672,
-        "usernameBoss": "Gustavo_Fring",
-        "usernameBuilder": "Bob"
+        "portNumber": "64917",
+        "usernameBoss": "Gus_Fring",
+        "usernameBuilder": "Bob",
+        "numOfBuilders": "4"
     }
 }

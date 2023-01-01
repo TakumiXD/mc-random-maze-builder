@@ -6,9 +6,13 @@ var Item;  // loaded after bot spawns in minecraft server
 var mcData; // loaded after bot spawns in minecraft server
 const vec3 = require('vec3');
 
-const NUM_OF_BUILDERS = 4;
+const NUM_OF_BUILDERS = Math.max(parseInt(config.settings.numOfBuilders), 1);
+const DEFAULT_BUILD_BLOCK_NAME = "oak_leaves"
 const MAX_LENGTH_ARGUMENTS = 3;
+const NUM_OF_TICKS_BOT_SPAWN = 60;
 
+// The bot that listens to user commands, creates the blueprint of the maze, and assigns
+// BuilderMazeBots which sections of the maze to build
 class BossMazeBot extends MazeBot {
     constructor(username) {
         super(username);
@@ -16,7 +20,7 @@ class BossMazeBot extends MazeBot {
         this.blueprint = {
             height: -1,
             width: -1,
-            buildBlockName: "oak_leaves",
+            buildBlockName: DEFAULT_BUILD_BLOCK_NAME,
             buildItem: null,
             buildBlock: null,
             shape: null
@@ -27,8 +31,8 @@ class BossMazeBot extends MazeBot {
     initEventListeners() {
         this.bot.once("spawn", () => {
             console.log(`${this.username} spawned`);
-            mcData = require('minecraft-data')(this.bot.version);
-            Item = require('prismarine-item')(this.bot.version);
+            mcData = require("minecraft-data")(this.bot.version);
+            Item = require("prismarine-item")(this.bot.version);
             this.bot.creative.stopFlying();
         });
         
@@ -36,7 +40,7 @@ class BossMazeBot extends MazeBot {
         this.bot.on("chat", async (username, message) => {
             if (username == this.username) return;
 
-            let tokens = message.split(' ');
+            let tokens = message.split(" ");
 
             if (tokens[0] == "buildMaze") {
                 await this.onBuildMaze(tokens.slice(1));
@@ -69,9 +73,12 @@ class BossMazeBot extends MazeBot {
         if (tokens.length > MAX_LENGTH_ARGUMENTS) return false;
         // validate and set maze height and width arguments
         if (isNaN(tokens[0]) || isNaN(tokens[1])) return false;
-        if (Maze.areValidArguments(parseInt(tokens[0]), parseInt(tokens[1]))) {
-            this.blueprint.height = parseInt(tokens[0]);
-            this.blueprint.width = parseInt(tokens[1]);
+        let heightToken = parseInt(tokens[0]);
+        let widthToken = parseInt(tokens[1]);
+        if (Maze.areValidArguments(heightToken), parseInt(widthToken) 
+            && heightToken > NUM_OF_BUILDERS && widthToken > NUM_OF_BUILDERS) {
+            this.blueprint.height = parseInt(heightToken);
+            this.blueprint.width = parseInt(widthToken);
         }
         else return false;
         // set buildBlockName to block argument if it exists
@@ -128,14 +135,21 @@ class BossMazeBot extends MazeBot {
         for (var i = 0; i < NUM_OF_BUILDERS; ++ i) {
             let builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
             this.builders.push(builder);
-            await this.bot.waitForTicks(60);
-            await builder.initBuildingBlock(this.blueprint.buildItem, this.blueprint.buildBlock);
-            await builder.initFly();
+            await this.bot.waitForTicks(NUM_OF_TICKS_BOT_SPAWN);
+            await builder.initBuildMode(this.blueprint.buildItem, this.blueprint.buildBlock);
             let builderPos = bossPos.offset(0, 0, builderStartingPositions[i]);
             await builder.flyToPosition(builderPos);
-            builder.setMazeToBuild(this.blueprint.shape.slice(builderStartingPositions[i], builderStartingPositions[i] + numOfRowsPerBuilder[i]));
+            builder.setMazeShapeToBuild(this.blueprint.shape.slice(builderStartingPositions[i], 
+                builderStartingPositions[i] + numOfRowsPerBuilder[i]));
         }
-        await Promise.all([this.builders.forEach( b => b.buildMaze() )]);
+        console.log(`${this.username} has ordered the builders to start building`);
+        let promises = Promise.all([this.builders.forEach(builder => builder.buildMaze())]);;
+        // Promise.all([this.builders.forEach(builder => builder.buildMaze())]).then( (values) => {
+        //     console.log("The maze is finished");
+        // });
+        promises.then(data => {
+            console.log("The maze is finished", data);
+        });
     }
 }
 
