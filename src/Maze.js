@@ -2,11 +2,22 @@ const { Stack } = require("js-sdsl");
 
 const offsets = [[-2, 0], [0, 2], [2, 0], [0, -2]];
 
+function make2DArray(height, width, val) {
+    let res = []
+    for (var i = 0; i < height; ++i) {
+        res[i] = [];
+        for(var j = 0; j < width; ++j) {
+            res[i][j] = val;
+        }
+    }
+    return res;
+}
+
 const Maze = {
     areValidArguments: function (height, width) {
         return height > 0 && width > 0;
     },
-    makeMaze: function (height, width) {
+    makeRandomMaze: function (height, width) {
         let maze = make2DArray(height, width, true);
         let visited = new Set();
         let stack = new Stack([]);
@@ -76,16 +87,6 @@ const Maze = {
         maze[0][1] = false;
         maze[height - 1][width - 2] = false;
         return maze;
-    },
-    make2DArray: function (height, width, val) {
-        let res = []
-        for (var i = 0; i < height; ++i) {
-            res[i] = [];
-            for(var j = 0; j < width; ++j) {
-                res[i][j] = val;
-            }
-        }
-        return res;
     }
 }
 

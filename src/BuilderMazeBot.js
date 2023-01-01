@@ -5,6 +5,7 @@ const vec3 = require('vec3');
 class BuilderMazeBot extends MazeBot {
     constructor(username) {
         super(username);
+        this.mazeToBuild = null;
         this.initEventListeners();
     }
 
@@ -38,12 +39,23 @@ class BuilderMazeBot extends MazeBot {
         await this.bot.placeBlock(referenceBlock, new vec3(0,1,0));
     }
 
-    async buildStraightLine() {
+    async buildMaze() {
         let currPos = this.bot.entity.position;
-        for (var i = 0; i < 10; ++i) {
-            await this.flyToPosition(currPos.offset(0, 0, i));
-            await this.buildTwoBlocksBelow();
+        let height = this.mazeToBuild.length;
+        let width = this.mazeToBuild[0].length;
+        for (var i = 0; i < height; ++i) {
+            for (var j = 0; j < width; ++ j) {
+                let position = currPos.offset(j, 0, i);
+                if (this.mazeToBuild[i][j]) {
+                    await this.flyToPosition(position);
+                    await this.buildTwoBlocksBelow();
+                }
+            }
         }
+    }
+
+    setMazeToBuild(maze) {
+        this.mazeToBuild = maze;
     }
 
 }
