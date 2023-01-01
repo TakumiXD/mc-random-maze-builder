@@ -2,14 +2,12 @@ const { Stack } = require("js-sdsl");
 
 const offsets = [[-2, 0], [0, 2], [2, 0], [0, -2]];
 
-module.exports = MazeMaker;
-
-const MazeMaker = {
+const Maze = {
     areValidArguments: function (height, width) {
         return height > 0 && width > 0;
     },
     makeMaze: function (height, width) {
-        maze = make2DArray(height, width, true);
+        let maze = make2DArray(height, width, true);
         let visited = new Set();
         let stack = new Stack([]);
         // base case
@@ -90,3 +88,5 @@ const MazeMaker = {
         return res;
     }
 }
+
+module.exports = Maze;
