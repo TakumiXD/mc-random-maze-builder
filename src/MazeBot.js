@@ -7,9 +7,13 @@ const settings = {
     username: config.settings.username
 };
 
+const FLY_HEIGHT = 2.5; 
+
+// --- Parent clas of BossMazeBot and BuilderMazeBot
 class MazeBot {
     constructor(username) {
         this.username = username;
+        this.flyHeight = FLY_HEIGHT;
         this.bot = mineflayer.createBot({
             host: "localhost",
             port: config.settings.portNumber,
@@ -18,8 +22,8 @@ class MazeBot {
         this.initBasicEventListeners();
     }
 
+    // --- Initializes basic event listeners
     initBasicEventListeners() {
-        // --- bot event listeners
         this.bot.on("death", () => {
             console.log(`${this.username} died`);
         });
@@ -35,10 +39,12 @@ class MazeBot {
         });
     }
 
+    // --- Sends the bot to its initial position, "FLY_HEIGHT" blocks above ground.
     async initFly() {
         let currPos = this.bot.entity.position;
-        await this.bot.creative.flyTo(currPos.offset(0, 2.5, 0));
+        await this.bot.creative.flyTo(currPos.offset(0, FLY_HEIGHT, 0));
     }
+
 }
 
-module.exports = MazeBot
+module.exports = MazeBot;

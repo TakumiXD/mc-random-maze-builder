@@ -1,10 +1,9 @@
 const MazeBot = require('./MazeBot');
-const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
 const vec3 = require('vec3');
 
 const QUICKBAR_SLOT_ONE = 36;
 
-// --- The bot that builds the maze
+// --- The bot that builds the maze, gets orders by BossMazeBot
 class BuilderMazeBot extends MazeBot {
     constructor(username) {
         super(username);
@@ -12,6 +11,7 @@ class BuilderMazeBot extends MazeBot {
         this.initEventListeners();
     }
 
+    // --- Initializes event listeners
     initEventListeners() {
         this.bot.once("spawn", () => {
             console.log(`${this.username} spawned`);
@@ -19,6 +19,7 @@ class BuilderMazeBot extends MazeBot {
         });
     }
 
+    // --- Setters for the maze that the builder should build
     setMazeShapeToBuild(maze) {
         this.mazeToBuild = maze;
     }
@@ -42,10 +43,10 @@ class BuilderMazeBot extends MazeBot {
         }
     }
 
-    // --- Assuming the bot is flying 2.5 blocks above the ground, makes the bot place 2 blocks 
+    // --- Assuming the bot is flying 2.5 blocks above the ground, makes the bot place 2 blocks
     // --- under it. 
     async buildTwoBlocksBelow() {
-        let currentPosition = this.bot.entity.position.offset(0, -2.5, 0);
+        let currentPosition = this.bot.entity.position.offset(0, -1 * this.flyHeight, 0);
         let referenceBlock = this.bot.blockAt(currentPosition.offset(0, -1, 0));
         await this.bot.placeBlock(referenceBlock, new vec3(0, 1, 0));
         referenceBlock = this.bot.blockAt(currentPosition);
@@ -79,9 +80,9 @@ class BuilderMazeBot extends MazeBot {
             }
         }
         console.log(`${this.username} is done building its part`);
-        return Promise.resolve("Success");
     }
 
 }
+
 
 module.exports = BuilderMazeBot;
