@@ -1,13 +1,18 @@
 {
   "name": "random_maze_builder",
   "version": "1.0.0",
-  "description": "",
+  "description": "Minecraft bots that build randomly generated mazes. Created using the Mineflayer library.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "mineflayer",
+    "minecraft",
+    "maze"
+  ],
+  "author": "TakumiXD",
+  "license": "MIT",
   "dependencies": {
     "js-sdsl": "^4.2.0",
     "mineflayer": "^4.6.0",

@@ -1,8 +1,8 @@
 {
     "settings": {
-        "portNumber": "64917",
-        "usernameBoss": "Gus_Fring",
-        "usernameBuilder": "Bob",
-        "numOfBuilders": "4"
+        "portNumber": "The port number of the server",
+        "usernameBoss": "(Accepted are A-Z, 0-9, _)",
+        "usernameBuilder": "(Accepted are A-Z, 0-9, _)",
+        "numOfBuilders": "Very large number of builders can crash the server"
     }
 }
