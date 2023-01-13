@@ -50,10 +50,10 @@ const Maze = {
                         if (newY > 0) neighbors.push(0);
                         break;
                     case 1:
-                        if (newX < width) neighbors.push(1);
+                        if (newX < width - 1) neighbors.push(1);
                         break;
                     case 2:
-                        if (newY < height) neighbors.push(2);
+                        if (newY < height - 1) neighbors.push(2);
                         break;
                     case 3:
                         if (newX > 0) neighbors.push(3);
@@ -95,7 +95,24 @@ const Maze = {
         }
         // finish the maze by creating entrance and exit
         maze[0][1] = false;
-        maze[height - 1][width - 2] = false;
+        if (height % 2 == 1) {
+            if (width % 2 == 1) {
+                maze[height - 1][width - 2] = false;
+            }
+            else {
+                maze[height - 1][width - 3] = false;
+            }
+        }
+        else {
+            if (width % 2 == 1) {
+                maze[height - 1][width - 2] = false;
+                maze[height - 2][width - 2] = false;
+            }
+            else {
+                maze[height - 1][width - 3] = false;
+                maze[height - 2][width - 3] = false;
+            }
+        }
         return maze;
     }
 }
