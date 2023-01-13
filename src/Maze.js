@@ -5,9 +5,9 @@ const offsets = [[-2, 0], [0, 2], [2, 0], [0, -2]];
 // helper function
 function make2DArray(height, width, val) {
     let res = []
-    for (var i = 0; i < height; ++i) {
+    for (let i = 0; i < height; ++i) {
         res[i] = [];
-        for(var j = 0; j < width; ++j) {
+        for(let j = 0; j < width; ++j) {
             res[i][j] = val;
         }
     }
@@ -19,6 +19,7 @@ const Maze = {
     areValidArguments: function (height, width) {
         return height > 0 && width > 0;
     },
+
     // Creates a random maze of specified height and width and returns it as a 2D array 
     // of boolean where "true" indicates the walls and "false" indicates the non-walls/path
     // Algorithm used: randomized DFS that traverses two indices at a time
@@ -26,11 +27,13 @@ const Maze = {
         let maze = make2DArray(height, width, true);
         let visited = new Set();
         let stack = new Stack([]);
+
         // base case, start a path at [1,1]
         stack.push([1,1]);
         visited.add(JSON.stringify([1, 1]));
         maze[1][1] = false;
         let numOfVisitableBlocks = Math.round((height - 2) / 2) * Math.round((width - 2) / 2);
+
         // maze algorithm
         while (visited.size < numOfVisitableBlocks) {
             // compute the visitable neighbors of the top element of the stack
@@ -38,7 +41,8 @@ const Maze = {
             let neighbors = []
             let topY = topElem[0];
             let topX = topElem[1];
-            for (var i = 0; i < 4; ++i) {
+
+            for (let i = 0; i < 4; ++i) {
                 let [offsetY, offsetX] = offsets[i];
                 let newY = topY + offsetY;
                 let newX = topX + offsetX;
@@ -93,6 +97,7 @@ const Maze = {
             }
 
         }
+
         // finish the maze by creating entrance and exit
         maze[0][1] = false;
         if (height % 2 == 1) {
@@ -113,6 +118,7 @@ const Maze = {
                 maze[height - 2][width - 3] = false;
             }
         }
+        
         return maze;
     }
 }

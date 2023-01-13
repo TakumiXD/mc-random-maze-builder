@@ -1,12 +1,6 @@
 const mineflayer = require("mineflayer");
 const config = require("../config.json");
 
-const settings = {
-    host: "localhost",
-    port: config.settings.portNumber,
-    username: config.settings.username
-};
-
 const FLY_HEIGHT = 2.5; 
 
 // --- Parent clas of BossMazeBot and BuilderMazeBot
@@ -42,7 +36,7 @@ class MazeBot {
     // --- Sends the bot to its initial position, "FLY_HEIGHT" blocks above ground.
     async initFly() {
         let currPos = this.bot.entity.position;
-        await this.bot.creative.flyTo(currPos.offset(0, FLY_HEIGHT, 0));
+        await this.bot.creative.flyTo(currPos.offset(0, this.flyHeight, 0));
     }
 
 }

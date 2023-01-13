@@ -49,6 +49,7 @@ class BuilderMazeBot extends MazeBot {
         let currentPosition = this.bot.entity.position.offset(0, -1 * this.flyHeight, 0);
         let referenceBlock = this.bot.blockAt(currentPosition.offset(0, -1, 0));
         await this.bot.placeBlock(referenceBlock, new vec3(0, 1, 0));
+
         referenceBlock = this.bot.blockAt(currentPosition);
         await this.bot.placeBlock(referenceBlock, new vec3(0, 1, 0));
     }
@@ -64,16 +65,17 @@ class BuilderMazeBot extends MazeBot {
         let initialPosition = this.bot.entity.position;
         let height = this.mazeToBuild.length;
         let width = this.mazeToBuild[0].length;
+        
         // build in a zig zag
-        for (var i = 0; i < height; ++i) {
+        for (let i = 0; i < height; ++i) {
             if (i % 2 == 0) {
-                for (var j = 0; j < width; ++ j) {
+                for (let j = 0; j < width; ++ j) {
                     let position = initialPosition.offset(j, 0, i);
                     if (this.mazeToBuild[i][j]) await this.buildAt(position);
                 }
             }
             else {
-                for (var j = width - 1; j >= 0; --j) {
+                for (let j = width - 1; j >= 0; --j) {
                     let position = initialPosition.offset(j, 0, i);
                     if (this.mazeToBuild[i][j]) await this.buildAt(position);
                 }

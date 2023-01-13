@@ -2,12 +2,12 @@ const MazeBot = require("./MazeBot");
 const BuilderMazeBot = require("./BuilderMazeBot");
 const Maze = require("./Maze.js");
 const config = require("../config.json");
-var Item;  // loaded after bot spawns in minecraft server
-var mcData; // loaded after bot spawns in minecraft server
+let Item;  // loaded after bot spawns in minecraft server
+let mcData; // loaded after bot spawns in minecraft server
 const vec3 = require('vec3');
 
 const NUM_OF_BUILDERS = Math.max(parseInt(config.settings.numOfBuilders), 1);
-const DEFAULT_BUILD_BLOCK_NAME = "oak_leaves"
+const DEFAULT_BUILD_BLOCK_NAME = "oak_leaves";
 const MAX_LENGTH_ARGUMENTS = 3;
 const NUM_OF_TICKS_BOT_SPAWN = 60;
 
@@ -22,7 +22,7 @@ class BossMazeBot extends MazeBot {
             width: -1,
             buildBlockName: DEFAULT_BUILD_BLOCK_NAME,
             buildItem: null,
-            buildBlock: null,
+            buildBlock: -1,
             shape: null
         };
         this.initEventListeners();
@@ -66,7 +66,7 @@ class BossMazeBot extends MazeBot {
         } catch(e) {
             this.bot.chat(`Failed, specified block does not exist: ${blockName}`);
             console.log(`getBlock() failed, specified block does not exist: ${blockName}`);
-            return null;
+            return -1;
         }
     }
 
@@ -74,6 +74,7 @@ class BossMazeBot extends MazeBot {
     setBlueprint(tokens) {
         // validate command length
         if (tokens.length > MAX_LENGTH_ARGUMENTS) return false;
+
         // validate and set maze height and width arguments
         if (isNaN(tokens[0]) || isNaN(tokens[1])) return false;
         let heightToken = parseInt(tokens[0]);
@@ -84,19 +85,24 @@ class BossMazeBot extends MazeBot {
             this.blueprint.width = parseInt(widthToken);
         }
         else return false;
+
         // set buildBlockName to block argument if it exists
         if (tokens.length == MAX_LENGTH_ARGUMENTS) {
             this.blueprint.buildBlockName = tokens[2];
         }
+
         // validate and set buildBlock
         this.blueprint.buildBlock = this.getBuildBlock(this.blueprint.buildBlockName);
-        if (!this.blueprint.buildBlock) return false;
+        if (this.blueprint.buildBlock == -1) return false;
+
         // validate and set buildItem
         this.blueprint.buildItem = this.getBuildItem(this.blueprint.buildBlock);
         if (!this.blueprint.buildItem) return false;
+
         // set maze shape
         this.blueprint.shape = 
             Maze.makeRandomMaze(this.blueprint.height, this.blueprint.width);
+
         return true;
     }
 
@@ -106,7 +112,8 @@ class BossMazeBot extends MazeBot {
         let numsOfRowsPerBuilder = []
         let avgNumOfRowsPerBuilder = Math.floor(this.blueprint.height / NUM_OF_BUILDERS);
         let leftoverNumsOfRows = this.blueprint.height % NUM_OF_BUILDERS;
-        for (var i = 0; i < NUM_OF_BUILDERS; ++i) {
+
+        for (let i = 0; i < NUM_OF_BUILDERS; ++i) {
             let numOfRows = avgNumOfRowsPerBuilder;
             if (leftoverNumsOfRows > 0) {
                 numOfRows += 1
@@ -114,6 +121,7 @@ class BossMazeBot extends MazeBot {
             }
             numsOfRowsPerBuilder.push(numOfRows);
         }
+
         return numsOfRowsPerBuilder;
     }
 
@@ -122,10 +130,12 @@ class BossMazeBot extends MazeBot {
     getBuilderStartingPositions(numsOfRowsPerBuilder) {
         let currentPosition = 0
         let builderStartingPositions = []
-        for (var i = 0; i < NUM_OF_BUILDERS; ++i) {
+
+        for (let i = 0; i < NUM_OF_BUILDERS; ++i) {
             builderStartingPositions.push(currentPosition);
             currentPosition += numsOfRowsPerBuilder[i];
         }
+
         return builderStartingPositions;
     };
 
@@ -133,12 +143,14 @@ class BossMazeBot extends MazeBot {
     async orderInitialPositions(bossPosition) {
         let numOfRowsPerBuilder = this.getNumOfRowsPerBuilder();
         let builderStartingPositions = this.getBuilderStartingPositions(numOfRowsPerBuilder);
-        for (var i = 0; i < NUM_OF_BUILDERS; ++ i) {
+        
+        for (let i = 0; i < NUM_OF_BUILDERS; ++ i) {
             // spawn builders
             let builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
             this.builders.push(builder);
             await this.bot.waitForTicks(NUM_OF_TICKS_BOT_SPAWN);
             await builder.initBuildMode(this.blueprint.buildItem, this.blueprint.buildBlock);
+
             // make builders go to their inital positions
             let builderPosition = bossPosition.offset(0, 0, builderStartingPositions[i]);
             await builder.flyToPosition(builderPosition);
@@ -163,11 +175,15 @@ class BossMazeBot extends MazeBot {
             console.log("buildMaze failed, invalid arguments");
             return;
         };
+
         await this.initFly();
+
         let bossPosition = this.bot.entity.position;
         await this.orderInitialPositions(bossPosition);
+
         console.log(`${this.username} has ordered the builders to start building`);
         await this.orderBuild();
+
         console.log("The maze is finished");
         this.bot.chat("The maze is finished");
     }
