@@ -5,7 +5,7 @@
   </a>
 </p>
 
-> Minecraft bots that build randomly generated mazes. Created using Javascript (Node) and the Mineflayer library.  
+> Bots that build randomly generated mazes in Minecraft Creative Mode. Created using Javascript (Node) and the Mineflayer library.  
 Inspired by https://www.youtube.com/watch?v=YRakYOglAvY&t=103s
 
 ![2023-01-15_22 12 49](https://user-images.githubusercontent.com/85015271/212610153-64c20584-d00b-4fcb-86da-92753b97522f.png)
@@ -25,7 +25,7 @@ npm install
 node index.js
 ```
 This will spawn the single bot ``BossMazeBot`` that listens to your commands. The ``BuilderMazeBot(s)`` the bot(s) that will actually build the maze spawn when you run a command.  
-3. Create a flat land for the maze. Position the ``BossMazeBot`` to the northwest corner of where you want the maze to be built.  
+3. Create a flat land for the maze. Position the ``BossMazeBot`` on the ground at the northwest corner of where you want the maze to be built.  
 4. Run the command to build the maze of height (z-axis in Minecraft) H and width (x-axis in Minecraft) W. 
 ```sh
 buildMaze H W
