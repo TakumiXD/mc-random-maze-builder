@@ -4,7 +4,7 @@ const offsets = [[-2, 0], [0, 2], [2, 0], [0, -2]];
 
 // helper function
 function make2DArray(height, width, val) {
-    let res = []
+    const res = []
     for (let i = 0; i < height; ++i) {
         res[i] = [];
         for(let j = 0; j < width; ++j) {
@@ -24,28 +24,28 @@ const Maze = {
     // of boolean where "true" indicates the walls and "false" indicates the non-walls/path
     // Algorithm used: randomized DFS that traverses two indices at a time
     makeRandomMaze: function (height, width) {
-        let maze = make2DArray(height, width, true);
-        let visited = new Set();
-        let stack = new Stack([]);
+        const maze = make2DArray(height, width, true);
+        const visited = new Set();
+        const stack = new Stack([]);
 
         // base case, start a path at [1,1]
         stack.push([1,1]);
         visited.add(JSON.stringify([1, 1]));
         maze[1][1] = false;
-        let numOfVisitableBlocks = Math.round((height - 2) / 2) * Math.round((width - 2) / 2);
+        const numOfVisitableBlocks = Math.round((height - 2) / 2) * Math.round((width - 2) / 2);
 
         // maze algorithm
         while (visited.size < numOfVisitableBlocks) {
             // compute the visitable neighbors of the top element of the stack
-            let topElem = stack.top();
-            let neighbors = []
-            let topY = topElem[0];
-            let topX = topElem[1];
+            const topElem = stack.top();
+            const neighbors = []
+            const topY = topElem[0];
+            const topX = topElem[1];
 
             for (let i = 0; i < 4; ++i) {
-                let [offsetY, offsetX] = offsets[i];
-                let newY = topY + offsetY;
-                let newX = topX + offsetX;
+                const [offsetY, offsetX] = offsets[i];
+                const newY = topY + offsetY;
+                const newX = topX + offsetX;
                 if (visited.has(JSON.stringify([newY, newX]))) {
                     continue;
                 }
@@ -68,11 +68,11 @@ const Maze = {
             // randomly pick a visitable neighbor, add it to visited, push it to the stack and
             // change the path to the neighbor and neighbor index to false.
             if (neighbors.length > 0) {
-                let nextDirection = neighbors[Math.floor(Math.random() * neighbors.length)];
-                let [offsetY, offsetX] = offsets[nextDirection];
-                let newY = topY + offsetY;
-                let newX = topX + offsetX;
-                let newPosition = [newY, newX];
+                const nextDirection = neighbors[Math.floor(Math.random() * neighbors.length)];
+                const [offsetY, offsetX] = offsets[nextDirection];
+                const newY = topY + offsetY;
+                const newX = topX + offsetX;
+                const newPosition = [newY, newX];
                 stack.push(newPosition);
                 visited.add(JSON.stringify(newPosition));
                 maze[newY][newX] = false;
@@ -100,21 +100,15 @@ const Maze = {
 
         // finish the maze by creating entrance and exit
         maze[0][1] = false;
-        if (height % 2 == 1) {
-            if (width % 2 == 1) {
-                maze[height - 1][width - 2] = false;
-            }
-            else {
-                maze[height - 1][width - 3] = false;
+        if (width % 2 == 1) {
+            maze[height - 1][width - 2] = false;
+            if (height % 2 == 0) {
+                maze[height - 2][width - 2] = false;
             }
         }
         else {
-            if (width % 2 == 1) {
-                maze[height - 1][width - 2] = false;
-                maze[height - 2][width - 2] = false;
-            }
-            else {
-                maze[height - 1][width - 3] = false;
+            maze[height - 1][width - 3] = false;
+            if (height % 2 == 0) {
                 maze[height - 2][width - 3] = false;
             }
         }

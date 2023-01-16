@@ -35,7 +35,7 @@ class MazeBot {
 
     // --- Sends the bot to its initial position, "FLY_HEIGHT" blocks above ground.
     async initFly() {
-        let currPos = this.bot.entity.position;
+        const currPos = this.bot.entity.position;
         await this.bot.creative.flyTo(currPos.offset(0, this.flyHeight, 0));
     }
 

@@ -46,7 +46,7 @@ class BuilderMazeBot extends MazeBot {
     // --- Assuming the bot is flying 2.5 blocks above the ground, makes the bot place 2 blocks
     // --- under it. 
     async buildTwoBlocksBelow() {
-        let currentPosition = this.bot.entity.position.offset(0, -1 * this.flyHeight, 0);
+        const currentPosition = this.bot.entity.position.offset(0, -1 * this.flyHeight, 0);
         let referenceBlock = this.bot.blockAt(currentPosition.offset(0, -1, 0));
         await this.bot.placeBlock(referenceBlock, new vec3(0, 1, 0));
 
@@ -62,9 +62,9 @@ class BuilderMazeBot extends MazeBot {
 
     // Makes the bot build the assigned maze
     async buildMaze() {
-        let initialPosition = this.bot.entity.position;
-        let height = this.mazeToBuild.length;
-        let width = this.mazeToBuild[0].length;
+        const initialPosition = this.bot.entity.position;
+        const height = this.mazeToBuild.length;
+        const width = this.mazeToBuild[0].length;
         
         // build in a zig zag
         for (let i = 0; i < height; ++i) {

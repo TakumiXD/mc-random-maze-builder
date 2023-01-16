@@ -41,7 +41,7 @@ class BossMazeBot extends MazeBot {
         this.bot.on("chat", async (username, message) => {
             if (username == this.username) return;
 
-            let tokens = message.split(" ");
+            const tokens = message.split(" ");
 
             if (tokens[0] == "buildMaze") {
                 await this.onBuildMaze(tokens.slice(1));
@@ -77,8 +77,8 @@ class BossMazeBot extends MazeBot {
 
         // validate and set maze height and width arguments
         if (isNaN(tokens[0]) || isNaN(tokens[1])) return false;
-        let heightToken = parseInt(tokens[0]);
-        let widthToken = parseInt(tokens[1]);
+        const heightToken = parseInt(tokens[0]);
+        const widthToken = parseInt(tokens[1]);
         if (Maze.areValidArguments(heightToken), parseInt(widthToken) 
             && heightToken > NUM_OF_BUILDERS && widthToken > NUM_OF_BUILDERS) {
             this.blueprint.height = parseInt(heightToken);
@@ -89,6 +89,9 @@ class BossMazeBot extends MazeBot {
         // set buildBlockName to block argument if it exists
         if (tokens.length == MAX_LENGTH_ARGUMENTS) {
             this.blueprint.buildBlockName = tokens[2];
+        }
+        else {
+            this.blueprint.buildBlockName = DEFAULT_BUILD_BLOCK_NAME
         }
 
         // validate and set buildBlock
@@ -109,8 +112,8 @@ class BossMazeBot extends MazeBot {
     // --- Returns an array where the integer in the ith index represents the number of rows
     // --- the ith builder is responsible for building the maze
     getNumOfRowsPerBuilder() {
-        let numsOfRowsPerBuilder = []
-        let avgNumOfRowsPerBuilder = Math.floor(this.blueprint.height / NUM_OF_BUILDERS);
+        const numsOfRowsPerBuilder = []
+        const avgNumOfRowsPerBuilder = Math.floor(this.blueprint.height / NUM_OF_BUILDERS);
         let leftoverNumsOfRows = this.blueprint.height % NUM_OF_BUILDERS;
 
         for (let i = 0; i < NUM_OF_BUILDERS; ++i) {
@@ -129,7 +132,7 @@ class BossMazeBot extends MazeBot {
     // --- (in row number) the ith builder starts building the maze
     getBuilderStartingPositions(numsOfRowsPerBuilder) {
         let currentPosition = 0
-        let builderStartingPositions = []
+        const builderStartingPositions = []
 
         for (let i = 0; i < NUM_OF_BUILDERS; ++i) {
             builderStartingPositions.push(currentPosition);
@@ -141,18 +144,18 @@ class BossMazeBot extends MazeBot {
 
     // --- Orders all builders to spawn and go to their initial positions
     async orderInitialPositions(bossPosition) {
-        let numOfRowsPerBuilder = this.getNumOfRowsPerBuilder();
-        let builderStartingPositions = this.getBuilderStartingPositions(numOfRowsPerBuilder);
+        const numOfRowsPerBuilder = this.getNumOfRowsPerBuilder();
+        const builderStartingPositions = this.getBuilderStartingPositions(numOfRowsPerBuilder);
         
         for (let i = 0; i < NUM_OF_BUILDERS; ++ i) {
             // spawn builders
-            let builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
+            const builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
             this.builders.push(builder);
             await this.bot.waitForTicks(NUM_OF_TICKS_BOT_SPAWN);
             await builder.initBuildMode(this.blueprint.buildItem, this.blueprint.buildBlock);
 
             // make builders go to their inital positions
-            let builderPosition = bossPosition.offset(0, 0, builderStartingPositions[i]);
+            const builderPosition = bossPosition.offset(0, 0, builderStartingPositions[i]);
             await builder.flyToPosition(builderPosition);
             builder.setMazeShapeToBuild(this.blueprint.shape.slice(builderStartingPositions[i], 
                 builderStartingPositions[i] + numOfRowsPerBuilder[i]));
@@ -161,7 +164,7 @@ class BossMazeBot extends MazeBot {
 
     // --- Orders all builders to start building their maze
     async orderBuild() {
-        let operations = this.builders.map(async builder => {
+        const operations = this.builders.map(async builder => {
             await builder.buildMaze();
         });
         return Promise.all(operations);
@@ -178,7 +181,7 @@ class BossMazeBot extends MazeBot {
 
         await this.initFly();
 
-        let bossPosition = this.bot.entity.position;
+        const bossPosition = this.bot.entity.position;
         await this.orderInitialPositions(bossPosition);
 
         console.log(`${this.username} has ordered the builders to start building`);
