@@ -3,6 +3,6 @@
         "portNumber": "The port number of the server",
         "usernameBoss": "(Accepted are A-Z, 0-9, _)",
         "usernameBuilder": "(Accepted are A-Z, 0-9, _)",
-        "numOfBuilders": "Very large number of builders can crash the server"
+        "numOfBuilders": "Cannot exceed the maximum player count of the server"
     }
 }

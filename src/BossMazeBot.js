@@ -147,14 +147,19 @@ class BossMazeBot extends MazeBot {
         const numOfRowsPerBuilder = this.getNumOfRowsPerBuilder();
         const builderStartingPositions = this.getBuilderStartingPositions(numOfRowsPerBuilder);
         
-        for (let i = 0; i < NUM_OF_BUILDERS; ++ i) {
-            // spawn builders
-            const builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
-            this.builders.push(builder);
-            await this.bot.waitForTicks(NUM_OF_TICKS_BOT_SPAWN);
-            await builder.initBuildMode(this.blueprint.buildItem, this.blueprint.buildBlock);
+        // spawn builders
+        if (this.builders.length < NUM_OF_BUILDERS) {
+            for (let i = this.builders.length; i < NUM_OF_BUILDERS; ++i) {
+                const builder = new BuilderMazeBot(`${config.settings.usernameBuilder}_${i}`);
+                await this.bot.waitForTicks(NUM_OF_TICKS_BOT_SPAWN);
+                this.builders.push(builder);
+            }
+        }
 
-            // make builders go to their inital positions
+        // pass the blueprint to the builders and make them go to their initial positions
+        for (let i = 0; i < NUM_OF_BUILDERS; ++i) {
+            const builder = this.builders[i];
+            await builder.initBuildMode(this.blueprint.buildItem, this.blueprint.buildBlock);
             const builderPosition = bossPosition.offset(0, 0, builderStartingPositions[i]);
             await builder.flyToPosition(builderPosition);
             builder.setMazeShapeToBuild(this.blueprint.shape.slice(builderStartingPositions[i], 
