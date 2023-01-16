@@ -1,8 +1,8 @@
 {
     "settings": {
         "portNumber": "The port number of the server",
-        "usernameBoss": "(Accepted are A-Z, 0-9, _)",
-        "usernameBuilder": "(Accepted are A-Z, 0-9, _)",
-        "numOfBuilders": "Cannot exceed the maximum player count of the server"
+        "usernameBoss": "Username of a single bot that listens to your commands (Accepted are A-Z, 0-9, _)",
+        "usernameBuilder": "Username of the bots that build the maze (Accepted are A-Z, 0-9, _)",
+        "numOfBuilders": "Number of bots to build the maze. This number cannot exceed the maximum player count of the server and the height of maze you wish to have built"
     }
 }
